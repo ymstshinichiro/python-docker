@@ -10,3 +10,4 @@ services:
       - ./csv:/var/www/csv
       - ./json:/var/www/json
       - ./xml:/var/www/xml
+      - ./config:/var/www/config

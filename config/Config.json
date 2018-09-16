@@ -1,0 +1,7 @@
+{   
+    "JsonDir": "../json/",
+    "XmlDir": "../xml/",
+    "SaveDir": "../csv/",
+    "CsvFormat": "",
+    "DataLabelList": ["age","name","gender"]
+}

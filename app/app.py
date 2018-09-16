@@ -1,30 +1,36 @@
 import json
 import xmltodict
+from config import ConfigMethods
+
+global config_obj
+config_obj = ConfigMethods()
 
 def main():
-    json_data = json.loads(file_read('../json/data.json'))
-    xml_data = xmltodict.parse(file_read('../xml/data.xml'))
+    mode = input('Please select extension of data file (json or xml).\n input j or x :')
 
-    print_with_header('-- json_data ---- ', json_data)
-    print_with_header('-- xml_data ---- ', xml_data)
+    if mode == 'j':    
+        path = config_obj.valid_filepath('Please enter the fileName to load (json) :', 'JsonDir')
+        json_data = json.loads(config_obj.file_read(path))
+        records = json_data["employees"]
+    elif mode == 'x':
+        path = config_obj.valid_filepath('Please enter the fileName to load (xml) :', 'XmlDir')
+        xml_data = xmltodict.parse(config_obj.file_read(path))
+        records = xml_data["root"]["employees"]
 
-    print_foreach_with_header('-- json_data["employees"] -- ',  json_data['employees'], 'name')
-    print_foreach_with_header('-- xml_data["root"]["employees"] -- ',  xml_data['root']['employees'], 'name')
+    for r in records:
+        concat_str_orderby_list(r)
 
-def file_read(path):
-    with open(path, 'r') as file:
-        text = file.read()
-    return text
 
-def print_with_header(headertext, printobject):
-    print(headertext)
-    print(printobject)
-    print()
+# config の DataLabelList から読み取った配列の順番で文字列を連結する
+def concat_str_orderby_list(list_objects):
+    ret_string = ""
 
-def print_foreach_with_header(headertext, printobjects, printlabel):
-    print(headertext)
+    labels = config_obj.load_config('DataLabelList')
+    for label in labels:
+        ret_string = ret_string + list_objects[label] + "," 
 
-    for obj in printobjects:
-        print(obj[printlabel])
+    ret_string = ret_string[:-1] + "\n"
+    print(ret_string)
+    return ret_string
 
 main()

@@ -1,21 +1,26 @@
+import sys
 import json
 import xmltodict
 from config import ConfigMethods
+from fileIO import IOmethods
 
-global config_obj
-config_obj = ConfigMethods()
+global conf
+conf = ConfigMethods()
 
 def main():
+    fIO = IOmethods()
+    
     mode = input('Please select extension of data file (json or xml).\n input j or x :')
-
+    MESSAGE = 'Please enter the fileName to load'
     if mode == 'j':    
-        path = config_obj.valid_filepath('Please enter the fileName to load (json) :', 'JsonDir')
-        json_data = json.loads(config_obj.file_read(path))
+        json_data = json.loads(fIO.ret_text(conf.input_path(MESSAGE + '(json) :', 'JsonDir')))
         records = json_data["employees"]
     elif mode == 'x':
-        path = config_obj.valid_filepath('Please enter the fileName to load (xml) :', 'XmlDir')
-        xml_data = xmltodict.parse(config_obj.file_read(path))
+        xml_data = xmltodict.parse(fIO.ret_text(conf.input_path(MESSAGE + '(xml) :', 'XmlDir')))
         records = xml_data["root"]["employees"]
+    else:
+        print('Input was an exception, so the application terminates.')
+        sys.exit()
 
     for r in records:
         concat_str_orderby_list(r)
@@ -25,7 +30,7 @@ def main():
 def concat_str_orderby_list(list_objects):
     ret_string = ""
 
-    labels = config_obj.load_config('DataLabelList')
+    labels = conf.load_config('DataLabelList')
     for label in labels:
         ret_string = ret_string + list_objects[label] + "," 
 
